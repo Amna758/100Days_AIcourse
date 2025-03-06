@@ -1,87 +1,49 @@
+import numpy as np
 import math
-#  QUESTION 01
-# Mean
-def mean(numbers):
-  return sum(numbers) / len(numbers)
-print("Mean",mean([1,4,5,7,8,9,10]))
-# Median
-def median(numbers):
-  numbers.sort()
-  n = len(numbers)
-  if n % 2 == 0:
-      return (numbers[n//2 - 1] + numbers[n//2]) / 2
-  else:
-      return numbers[n//2]
-print("Median",median([1,4,5,7,8,9,10]))
-# Mode
-def mode(numbers):
-  frequency = {} 
-  for num in numbers:
-      if num in frequency:
-          frequency[num] += 1
-      else:
-          frequency[num] = 1
-  max_count = max(frequency.values())
-  mode = []
-  for key in frequency:
-      if frequency[key] == max_count:
-          mode.append(key)
-  if len(mode) == 1:
-      return mode[0]
-  else:
-      return mode
-numbers = [1,4,5,7,8,9,10]
-print("Mode:",mode(numbers))
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics.pairwise import cosine_similarity
 
+# 1. Mean Squared Error (MSE)
+def mean_squared_error(y_true, y_pred):
+    return np.mean((np.array(y_true) - np.array(y_pred)) ** 2)
 
-# QUESTION 02
-# Variance
-def variance(numbers):
-  total = 0
-  for num in numbers:
-      total += num
-  mean = total / len(numbers)
-  squared_differences = []
-  for num in numbers:
-      squared_differences.append((num - mean) ** 2)
-  total_squared_diff = 0
-  for value in squared_differences:
-      total_squared_diff += value
-  variance = total_squared_diff / len(numbers)
-  return variance
-numbers = [1,4,5,7,8,9,10]
-print("Variance:", variance(numbers))
+y_true = [3, -0.5, 2, 7]
+y_pred = [2.5, 0.0, 2, 8]
 
-# QUESTION 03
-# Standard Deviation
-def standard_deviation(numbers):
-  total = 0
-  for num in numbers:
-      total += num
-  mean = total / len(numbers)
-  squared_differences = []
-  for num in numbers:
-      squared_differences.append((num - mean) ** 2)
-  total_squared_diff = 0
-  for value in squared_differences:
-      total_squared_diff += value
-  variance = total_squared_diff / len(numbers)
-  standard_deviation = math.sqrt(variance)
-  return standard_deviation
-numbers = [1,4,5,7,8,9,10]
-print("Standard Deviation:", standard_deviation(numbers))
+print("MSE:", mean_squared_error(y_true, y_pred))
 
-# QUESTION 04
- # Euclidean Distance
-def euclidean_distance(a, b):
-  if isinstance(a, list) and isinstance(b, list):
-      return math.sqrt(sum((x - y) ** 2 for x, y in zip(a, b)))
-  else:
-      return abs(a - b)
-print("Euclidean Distance:", euclidean_distance([3, 4], [6, 8]))
+# 2. Root Mean Squared Error (RMSE)
+def root_mean_squared_error(y_true, y_pred):
+    return np.sqrt(mean_squared_error(y_true, y_pred))
 
-# QUESTION 05
-#Sigmoid
-def sigmoid(x):
-  return 1 / (1 + math.exp(-x))
-print("Sigmoid:", sigmoid(5))
+print("RMSE:", root_mean_squared_error(y_true, y_pred))
+
+# 3. Cosine Similarity
+def compute_cosine_similarity(vec1, vec2):
+    vec1 = np.array(vec1).reshape(1, -1)
+    vec2 = np.array(vec2).reshape(1, -1)
+    return cosine_similarity(vec1, vec2)[0][0]
+
+vec1 = [1, 2, 3]
+vec2 = [4, 5, 6]
+print("Cosine Similarity:", compute_cosine_similarity(vec1, vec2))
+
+# 4. Linear Regression
+X = np.array([[1], [2], [3], [4], [5]])  # Features
+y = np.array([2, 4, 6, 8, 10])  # Labels
+
+model = LinearRegression()
+model.fit(X, y)
+y_pred_lr = model.predict(X)
+
+print("Linear Regression Predictions:", y_pred_lr)
+print("Linear Regression Coefficient:", model.coef_[0])
+print("Linear Regression Intercept:", model.intercept_)
+
+# 5. Softmax Function
+def softmax(x):
+    exp_x = np.exp(x - np.max(x))  # Subtracting max for numerical stability
+    return exp_x / exp_x.sum()
+
+values = [2.0, 1.0, 0.1]
+print("Softmax Output:", softmax(values))
